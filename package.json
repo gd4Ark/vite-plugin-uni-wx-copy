@@ -13,7 +13,12 @@
     "url": "git+https://github.com/gd4Ark/vite-plugin-uni-wx-copy.git"
   },
   "bugs": "https://github.com/gd4Ark/vite-plugin-uni-wx-copy/issues",
-  "keywords": [],
+  "keywords": [
+    "vite",
+    "vite-plugin",
+    "uni-app",
+    "miniprogram"
+  ],
   "sideEffects": false,
   "exports": {
     ".": {
