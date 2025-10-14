@@ -1,12 +1,19 @@
 # vite-plugin-uni-wx-copy
 
-一个帮助你在 uni-app 项目中使用原生微信小程序页面的 Vite 插件。它能自动处理依赖文件和页面路径问题，让你轻松地将原生微信小程序组件和页面集成到 uni-app 项目中。
+一个帮助你在 uni-app 项目中复用原生微信小程序页面的混合开发插件。
+
+## 为什么需要这个插件？
+
+满足以下场景：
+
+- 需要在 uni-app 项目中集成部分原生微信小程序页面
+- 正在将原生微信小程序项目迁移到 uni-app，需要渐进式重构
 
 ## 特性
 
+- 完美支持原生微信小程序和 uni-app 混合开发模式
 - 自动将原生微信小程序页面和组件复制到 uni-app 构建产物中
 - 支持主包和分包页面
-- 共享组件和工具管理
 - 自定义文件内容重写
 - 自动路径解析和替换
 - 开发模式下支持热重载
@@ -19,7 +26,27 @@ pnpm add vite-plugin-uni-wx-copy -D
 
 ## 使用
 
-在你的 `vite.config.ts` 中添加插件：
+### 项目结构
+
+推荐的项目结构如下：
+
+```text
+.
+├── src/                 # uni-app 项目主目录
+│   ├── pages/          # uni-app 页面
+│   ├── components/     # uni-app 组件
+│   └── ...
+├── miniprogram/        # 原生微信小程序代码目录（可选）
+│   ├── components/     # 需要复用的原生组件
+│   ├── pages/         # 需要复用的原生页面
+│   └── ...
+├── vite.config.ts      # Vite 配置文件
+└── ...
+```
+
+### 配置步骤
+
+1. 在 uni-app 项目的 `vite.config.ts` 中添加插件：
 
 ```ts
 import uni from '@dcloudio/vite-plugin-uni'
@@ -30,7 +57,32 @@ export default defineConfig({
   plugins: [
     uni(),
     uniWxCopy({
-      // options...
+      rootDir: '../miniprogram',
+      // 复制共享资源
+      copy: [
+        {
+          sources: [
+            'components',
+            'static',
+            'utils',
+          ],
+          dest: 'shared/',
+          shared: true,
+        },
+      ],
+      // 主包页面
+      pages: [
+        'pages/index',
+        'pages/page1',
+        'pages/page2',
+      ],
+      // 分包配置
+      subPackages: [
+        {
+          root: 'subpackages',
+          pages: ['detail'],
+        },
+      ],
     })
   ]
 })
@@ -79,9 +131,11 @@ interface ReplaceRule {
 }
 ```
 
-## 示例
+## 实际开发示例
 
-下面是该插件的完整使用示例：
+### 1. 共享组件配置
+
+在 `vite.config.ts` 中配置共享组件：
 
 ```ts
 import uni from '@dcloudio/vite-plugin-uni'
@@ -92,9 +146,8 @@ export default defineConfig({
   plugins: [
     uni(),
     uniWxCopy({
-      debug: false,
       rootDir: '../miniprogram',
-      // 复制共享资源
+      // 复制共享组件和资源
       copy: [
         {
           sources: [
@@ -104,19 +157,6 @@ export default defineConfig({
           ],
           dest: 'shared/',
           shared: true,
-        },
-      ],
-      // 主包页面
-      pages: [
-        'pages/index',
-        'pages/page1',
-        'pages/page2',
-      ],
-      // 分包配置
-      subPackages: [
-        {
-          root: 'subpackages',
-          pages: ['detail'],
         },
       ],
       // 重写 app.json 以添加全局组件
@@ -133,8 +173,37 @@ export default defineConfig({
           },
         },
       ],
-    }),
-  ],
+    })
+  ]
 })
+```
 
-// 你可以参考 playground 目录下的示例用法来进行配置和开发
+### 2. 分包配置
+
+在 `vite.config.ts` 中配置分包：
+
+```ts
+export default defineConfig({
+  plugins: [
+    uni(),
+    uniWxCopy({
+      rootDir: '../miniprogram',
+      // 主包页面
+      pages: [
+        'pages/index',
+        'pages/page1',
+        'pages/page2',
+      ],
+      // 分包配置
+      subPackages: [
+        {
+          root: 'subpackages',
+          pages: ['detail'],
+        },
+      ],
+    })
+  ]
+})
+```
+
+你可以参考 playground 目录下的示例项目来进行配置和开发。
