@@ -1,14 +1,14 @@
 import uni from '@dcloudio/vite-plugin-uni'
 import { defineConfig } from 'vite'
+// @ts-nocheck
 import uniWxCopy from 'vite-plugin-uni-wx-copy'
 
 const uniPlugin = uni() as any
-const uniWxCopyPlugin = uniWxCopy as any
 
 export default defineConfig({
   plugins: [
     uniPlugin,
-    uniWxCopyPlugin({
+    uniWxCopy({
       debug: false,
       rootDir: '../miniprogram',
       copy: [

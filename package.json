@@ -3,7 +3,7 @@
   "type": "module",
   "version": "0.0.2",
   "packageManager": "pnpm@10.17.1",
-  "description": "_description_",
+  "description": "一个帮助你在 uni-app 项目中使用原生微信小程序页面的 Vite 插件",
   "author": "Anthony Fu <anthonyfu117@hotmail.com>",
   "license": "MIT",
   "funding": "https://github.com/sponsors/gd4Ark",
