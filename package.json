@@ -1,7 +1,7 @@
 {
   "name": "vite-plugin-uni-wx-copy",
   "type": "module",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "packageManager": "pnpm@10.17.1",
   "description": "一个帮助你在 uni-app 项目中复用原生微信小程序页面的插件",
   "author": "gd4Ark <gd4ark@gmail.com>",
