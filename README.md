@@ -1,42 +1,140 @@
-# pkg-placeholder
+# vite-plugin-uni-wx-copy
 
-[![npm version][npm-version-src]][npm-version-href]
-[![npm downloads][npm-downloads-src]][npm-downloads-href]
-[![bundle][bundle-src]][bundle-href]
-[![JSDocs][jsdocs-src]][jsdocs-href]
-[![License][license-src]][license-href]
+一个帮助你在 uni-app 项目中使用原生微信小程序页面的 Vite 插件。它能自动处理依赖文件和页面路径问题，让你轻松地将原生微信小程序组件和页面集成到 uni-app 项目中。
 
-_description_
+## 特性
 
-## Note for Developers
+- 自动将原生微信小程序页面和组件复制到 uni-app 构建产物中
+- 支持主包和分包页面
+- 共享组件和工具管理
+- 自定义文件内容重写
+- 自动路径解析和替换
+- 开发模式下支持热重载
 
-This starter recommands using [npm Trusted Publisher](https://github.com/e18e/ecosystem-issues/issues/201), where the release is done on CI to ensure the security of the packages.
+## 安装
 
-To do so, you need to run `pnpm publish` manually for the very first time to create the package on npm, and then go to `https://www.npmjs.com/package/<your-package-name>/access` to set the connection to your GitHub repo.
+```bash
+pnpm add vite-plugin-uni-wx-copy -D
+```
 
-Then for the future releases, you can run `pnpm run release` to do the release and the GitHub Actions will take care of the release process.
+## 使用
 
-## Sponsors
+在你的 `vite.config.ts` 中添加插件：
 
-<p align="center">
-  <a href="https://cdn.jsdelivr.net/gh/antfu/static/sponsors.svg">
-    <img src='https://cdn.jsdelivr.net/gh/antfu/static/sponsors.svg'/>
-  </a>
-</p>
+```ts
+import uni from '@dcloudio/vite-plugin-uni'
+import { defineConfig } from 'vite'
+import uniWxCopy from 'vite-plugin-uni-wx-copy'
 
-## License
+export default defineConfig({
+  plugins: [
+    uni(),
+    uniWxCopy({
+      // options...
+    })
+  ]
+})
+```
 
-[MIT](./LICENSE) License © [Anthony Fu](https://github.com/antfu)
+## 配置
 
-<!-- Badges -->
+### 插件选项
 
-[npm-version-src]: https://img.shields.io/npm/v/pkg-placeholder?style=flat&colorA=080f12&colorB=1fa669
-[npm-version-href]: https://npmjs.com/package/pkg-placeholder
-[npm-downloads-src]: https://img.shields.io/npm/dm/pkg-placeholder?style=flat&colorA=080f12&colorB=1fa669
-[npm-downloads-href]: https://npmjs.com/package/pkg-placeholder
-[bundle-src]: https://img.shields.io/bundlephobia/minzip/pkg-placeholder?style=flat&colorA=080f12&colorB=1fa669&label=minzip
-[bundle-href]: https://bundlephobia.com/result?p=pkg-placeholder
-[license-src]: https://img.shields.io/github/license/antfu/pkg-placeholder.svg?style=flat&colorA=080f12&colorB=1fa669
-[license-href]: https://github.com/antfu/pkg-placeholder/blob/main/LICENSE
-[jsdocs-src]: https://img.shields.io/badge/jsdocs-reference-080f12?style=flat&colorA=080f12&colorB=1fa669
-[jsdocs-href]: https://www.jsdocs.io/package/pkg-placeholder
+| 选项 | 类型 | 默认值 | 说明 |
+|--------|------|---------|-------------|
+| `debug` | `boolean` | `false` | 启用调试模式，显示详细日志 |
+| `rootDir` | `string` | `''` | 原生微信小程序代码的根目录 |
+| `pages` | `string[]` | `[]` | 需要复制的主包页面路径列表 |
+| `subPackages` | `Array<{ root: string, pages: string[] }>` | `[]` | 需要复制的分包页面列表 |
+| `copy` | `Array<CopyItem>` | `[]` | 需要复制的文件和目录 |
+| `rewrite` | `Array<WriteItem>` | `[]` | 文件内容重写配置 |
+| `replaceRules` | `Array<ReplaceRule>` | `[]` | 路径替换规则 |
+
+### 类型定义
+
+```ts
+interface CopyItem {
+  // 需要复制的源目录列表
+  sources: string[]
+  // 目标目录
+  dest: string
+  // 是否为共享资源
+  shared?: boolean
+}
+
+interface WriteItem {
+  // 目标文件路径
+  file: string
+  // 修改文件内容的函数
+  write: (content: string) => string
+}
+
+interface ReplaceRule {
+  // 要匹配的正则表达式或字符串
+  from: RegExp | string
+  // 替换的目标字符串或函数
+  to: string | ((match: string, ...args: string[]) => string)
+  // 要处理的文件（glob 模式）
+  files: string[]
+}
+```
+
+## 示例
+
+下面是该插件的完整使用示例：
+
+```ts
+import uni from '@dcloudio/vite-plugin-uni'
+import { defineConfig } from 'vite'
+import uniWxCopy from 'vite-plugin-uni-wx-copy'
+
+export default defineConfig({
+  plugins: [
+    uni(),
+    uniWxCopy({
+      debug: false,
+      rootDir: '../miniprogram',
+      // 复制共享资源
+      copy: [
+        {
+          sources: [
+            'components',
+            'static',
+            'utils',
+          ],
+          dest: 'shared/',
+          shared: true,
+        },
+      ],
+      // 主包页面
+      pages: [
+        'pages/index',
+        'pages/page1',
+        'pages/page2',
+      ],
+      // 分包配置
+      subPackages: [
+        {
+          root: 'subpackages',
+          pages: ['detail'],
+        },
+      ],
+      // 重写 app.json 以添加全局组件
+      rewrite: [
+        {
+          file: 'app.json',
+          write: (code) => {
+            const appJson = JSON.parse(code)
+            appJson.usingComponents = {
+              ...appJson.usingComponents,
+              'app-btn': '/shared/components/app-btn/app-btn',
+            }
+            return JSON.stringify(appJson, null, 2)
+          },
+        },
+      ],
+    }),
+  ],
+})
+
+// 你可以参考 playground 目录下的示例用法来进行配置和开发

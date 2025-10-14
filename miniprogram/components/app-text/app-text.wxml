@@ -1,0 +1,7 @@
+<view 
+  class="app-btn app-btn--{{type}} app-btn--{{size}} app-btn--{{shape}} {{disabled ? 'app-btn--disabled' : ''}} {{loading ? 'app-btn--loading' : ''}}"
+  bind:tap="onClick"
+>
+  <view wx:if="{{loading}}" class="app-btn__loading"></view>
+  <view class="app-btn__text">{{text}}</view>
+</view>

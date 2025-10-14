@@ -1,34 +1,52 @@
 {
-  "name": "pkg-placeholder",
+  "name": "vite-plugin-uni-wx-copy",
   "type": "module",
   "version": "0.0.0",
   "packageManager": "pnpm@10.17.1",
   "description": "_description_",
   "author": "Anthony Fu <anthonyfu117@hotmail.com>",
   "license": "MIT",
-  "funding": "https://github.com/sponsors/antfu",
-  "homepage": "https://github.com/antfu/pkg-placeholder#readme",
+  "funding": "https://github.com/sponsors/gd4Ark",
+  "homepage": "https://github.com/gd4Ark/vite-plugin-uni-wx-copy#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/antfu/pkg-placeholder.git"
+    "url": "git+https://github.com/gd4Ark/vite-plugin-uni-wx-copy.git"
   },
-  "bugs": "https://github.com/antfu/pkg-placeholder/issues",
+  "bugs": "https://github.com/gd4Ark/vite-plugin-uni-wx-copy/issues",
   "keywords": [],
   "sideEffects": false,
   "exports": {
-    ".": "./dist/index.js",
-    "./package.json": "./package.json"
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
   },
-  "main": "./dist/index.js",
+  "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "*": [
+        "./dist/*",
+        "./dist/index.d.ts"
+      ]
+
+    }
+  },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsdown",
-    "dev": "tsdown --watch",
-    "lint": "eslint",
+    "build": "tsdown --format esm --format cjs",
+    "dev": "tsdown --watch --format esm --format cjs",
+    "lint": "eslint .",
+    "lint:fix": "pnpm lint --fix",
     "prepublishOnly": "nr build",
     "release": "bumpp",
     "start": "tsx src/index.ts",
@@ -36,10 +54,17 @@
     "typecheck": "tsc --noEmit",
     "prepare": "simple-git-hooks"
   },
+  "dependencies": {
+    "chokidar": "catalog:inlined",
+    "fs-extra": "catalog:inlined",
+    "replace-in-file": "catalog:inlined"
+  },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:cli",
     "@antfu/ni": "catalog:cli",
     "@antfu/utils": "catalog:inlined",
+    "@types/chokidar": "catalog:types",
+    "@types/fs-extra": "catalog:types",
     "@types/node": "catalog:types",
     "bumpp": "catalog:cli",
     "eslint": "catalog:cli",

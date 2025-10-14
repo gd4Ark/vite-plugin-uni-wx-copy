@@ -1,0 +1,45 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/page1/page1",
+    "pages/page2/page2"
+  ],
+  "subpackages": [
+    {
+      "root": "subpackages",
+      "pages": [
+        "detail/detail"
+      ]
+    }
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarBackgroundColor": "#ffffff"
+  },
+  "tabBar": {
+    "custom": false,
+    "color": "#666666",
+    "selectedColor": "#1677ff",
+    "list": [{
+      "pagePath": "pages/index/index",
+      "text": "首页",
+      "iconPath": "static/tarbar-icon/index.png",
+      "selectedIconPath": "static/tarbar-icon/index_active.png"
+    }, {
+      "pagePath": "pages/page1/page1",
+      "text": "第一页",
+      "iconPath": "static/tarbar-icon/page1.png",
+      "selectedIconPath": "static/tarbar-icon/page1_active.png"
+    }, {
+      "pagePath": "pages/page2/page2",
+      "text": "第二页",
+      "iconPath": "static/tarbar-icon/page2.png",
+      "selectedIconPath": "static/tarbar-icon/page2_active.png"
+    }]
+  },
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents",
+  "usingComponents": {
+    "app-btn": "components/app-btn/app-btn"
+  }
+}

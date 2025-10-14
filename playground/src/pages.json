@@ -1,0 +1,53 @@
+{
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "uni-app",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F8F8F8"
+  },
+  "pages": [
+    {
+      "path": "pages/index-v2/index-v2"
+    }
+  ],
+  "subPackages": [
+    {
+      "root": "packages-sub",
+      "pages": [
+        {
+          "path": "index/index"
+        }
+      ]
+    }
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarBackgroundColor": "#ffffff"
+  },
+  "tabBar": {
+    "custom": false,
+    "color": "#666666",
+    "selectedColor": "#1677ff",
+    "list": [{
+      "pagePath": "pages/index-v2/index-v2",
+      "text": "首页",
+      "iconPath": "static/index.png",
+      "selectedIconPath": "static/index_active.png"
+    }, {
+      "pagePath": "pages/index/index",
+      "text": "首页",
+      "iconPath": "shared/static/tarbar-icon/index.png",
+      "selectedIconPath": "shared/static/tarbar-icon/index_active.png"
+    }, {
+      "pagePath": "pages/page1/page1",
+      "text": "第一页",
+      "iconPath": "shared/static/tarbar-icon/page1.png",
+      "selectedIconPath": "shared/static/tarbar-icon/page1_active.png"
+    }, {
+      "pagePath": "pages/page2/page2",
+      "text": "第二页",
+      "iconPath": "shared/static/tarbar-icon/page2.png",
+      "selectedIconPath": "shared/static/tarbar-icon/page2_active.png"
+    }]
+  }
+}

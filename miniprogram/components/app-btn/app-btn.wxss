@@ -1,0 +1,93 @@
+.app-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 0 32rpx;
+  font-size: 28rpx;
+  line-height: 1;
+  text-align: center;
+  border-radius: 8rpx;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  -webkit-appearance: none;
+}
+
+/* 按钮大小 */
+.app-btn--large {
+  width: 100%;
+  height: 88rpx;
+}
+
+.app-btn--normal {
+  height: 76rpx;
+  padding: 0 30rpx;
+}
+
+.app-btn--small {
+  height: 56rpx;
+  padding: 0 16rpx;
+  font-size: 24rpx;
+}
+
+/* 按钮形状 */
+.app-btn--square {
+  border-radius: 8rpx;
+}
+
+.app-btn--round {
+  border-radius: 999rpx;
+}
+
+/* 按钮类型 */
+.app-btn--default {
+  color: #333;
+  background: #fff;
+  border: 2rpx solid #ebedf0;
+}
+
+.app-btn--primary {
+  color: #fff;
+  background: #07c160;
+  border: 2rpx solid #07c160;
+}
+
+.app-btn--danger {
+  color: #fff;
+  background: #ee0a24;
+  border: 2rpx solid #ee0a24;
+}
+
+/* 禁用状态 */
+.app-btn--disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* 加载状态 */
+.app-btn--loading {
+  cursor: default;
+}
+
+.app-btn--loading .app-btn__text {
+  margin-left: 12rpx;
+}
+
+.app-btn__loading {
+  width: 28rpx;
+  height: 28rpx;
+  border: 2rpx solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: btn-spin 0.6s linear infinite;
+}
+
+@keyframes btn-spin {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

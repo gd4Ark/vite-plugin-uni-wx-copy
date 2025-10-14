@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "app-text": "/components/app-text/app-text"
+  },
+  "navigationBarTitleText": "page1",
+  "enablePullDownRefresh": true
+}

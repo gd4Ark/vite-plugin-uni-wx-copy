@@ -1,0 +1,3 @@
+<view>首页28</view>
+
+<app-btn text="点击" catch:tap="onClick" />
