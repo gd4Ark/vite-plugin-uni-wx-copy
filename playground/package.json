@@ -1,6 +1,7 @@
 {
   "name": "uni-preset-vue",
   "version": "0.0.0",
+  "private": true,
   "scripts": {
     "dev:mp-weixin": "uni -p mp-weixin",
     "build:mp-weixin": "uni build -p mp-weixin"
