@@ -2,6 +2,8 @@
 
 一个帮助你在 uni-app 项目中复用原生微信小程序页面的混合开发插件。
 
+阅读 [《uni-app 与原生小程序混合开发方案》](https://4ark.me/posts/2025-10-15-uni-app-hybrid-native-miniprogram/) 了解详细背景。
+
 ## 为什么需要这个插件？
 
 满足以下场景：
@@ -24,7 +26,7 @@
 pnpm add vite-plugin-uni-wx-copy -D
 ```
 
-## 使用
+## 最佳实践
 
 ### 项目结构
 
@@ -38,7 +40,7 @@ pnpm add vite-plugin-uni-wx-copy -D
 │   └── ...
 ├── miniprogram/        # 原生微信小程序代码目录（可选）
 │   ├── components/     # 需要复用的原生组件
-│   ├── pages/         # 需要复用的原生页面
+│   ├── pages/          # 需要复用的原生页面
 │   └── ...
 ├── vite.config.ts      # Vite 配置文件
 └── ...
@@ -133,9 +135,9 @@ interface ReplaceRule {
 
 ## 实际开发示例
 
-### 1. 共享组件配置
+### 完整配置示例
 
-在 `vite.config.ts` 中配置共享组件：
+以下是一个包含常见场景的完整配置示例：
 
 ```ts
 import uni from '@dcloudio/vite-plugin-uni'
@@ -147,21 +149,35 @@ export default defineConfig({
     uni(),
     uniWxCopy({
       rootDir: '../miniprogram',
-      // 复制共享组件和资源
+      // 1. 复制共享资源到独立命名空间
       copy: [
         {
           sources: [
-            'components',
-            'static',
-            'utils',
+            'components', // 公共组件
+            'static', // 静态资源
+            'utils', // 工具库
           ],
           dest: 'shared/',
           shared: true,
         },
       ],
-      // 重写 app.json 以添加全局组件
+      // 2. 配置页面
+      pages: [
+        'pages/index',
+        'pages/page1',
+        'pages/page2',
+      ],
+      // 3. 分包配置
+      subPackages: [
+        {
+          root: 'subpackages',
+          pages: ['detail'],
+        },
+      ],
+      // 4. 重写配置文件
       rewrite: [
         {
+          // 注册全局组件
           file: 'app.json',
           write: (code) => {
             const appJson = JSON.parse(code)
@@ -172,9 +188,28 @@ export default defineConfig({
             return JSON.stringify(appJson, null, 2)
           },
         },
+        {
+          // 修改环境配置
+          file: 'shared/config/index.js',
+          write: (code) => {
+            return code.replace(
+              /export const DEV =(.+)/,
+              `export const DEV = ${process.env.NODE_ENV === 'development'}`
+            )
+          },
+        },
       ],
-    })
-  ]
+      // 5. 路径替换规则
+      replaceRules: [
+        {
+          // 替换鉴权方法调用
+          from: /auth\.getUserInfo\(/g,
+          to: 'getApp().getUserInfo(',
+          files: ['pages/**/*.js', 'shared/**/*.js'],
+        },
+      ],
+    }),
+  ],
 })
 ```
 
@@ -182,28 +217,9 @@ export default defineConfig({
 
 在 `vite.config.ts` 中配置分包：
 
-```ts
-export default defineConfig({
-  plugins: [
-    uni(),
-    uniWxCopy({
-      rootDir: '../miniprogram',
-      // 主包页面
-      pages: [
-        'pages/index',
-        'pages/page1',
-        'pages/page2',
-      ],
-      // 分包配置
-      subPackages: [
-        {
-          root: 'subpackages',
-          pages: ['detail'],
-        },
-      ],
-    })
-  ]
-})
-```
+3. **开发调试**：
+   - 启动开发服务器，插件会自动处理文件同步
+   - 修改原生代码时自动触发热重载
+   - 查看构建日志确保配置正确
 
 你可以参考 playground 目录下的示例项目来进行配置和开发。
