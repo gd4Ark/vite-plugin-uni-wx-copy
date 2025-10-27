@@ -31,16 +31,16 @@ describe('copy service', () => {
         dest: 'shared',
       }]
 
-      await copyFiles('/root', '/config', copyItems)
+      await copyFiles('root', 'config', copyItems)
 
-      expect(fs.ensureDir).toHaveBeenCalledWith('/config/shared')
+      expect(fs.ensureDir).toHaveBeenCalledWith(expect.stringMatching(/config[/\\]shared$/))
       expect(fs.copy).toHaveBeenCalledWith(
-        '/root/components',
-        '/config/shared/components',
+        expect.stringMatching(/root[/\\]components$/),
+        expect.stringMatching(/config[/\\]shared[/\\]components$/),
       )
       expect(fs.copy).toHaveBeenCalledWith(
-        '/root/utils',
-        '/config/shared/utils',
+        expect.stringMatching(/root[/\\]utils$/),
+        expect.stringMatching(/config[/\\]shared[/\\]utils$/),
       )
     })
 
@@ -56,7 +56,7 @@ describe('copy service', () => {
         },
       ]
 
-      await copyFiles('/root', '/config', copyItems)
+      await copyFiles('root', 'config', copyItems)
 
       expect(fs.ensureDir).toHaveBeenCalledTimes(2)
       expect(fs.copy).toHaveBeenCalledTimes(2)
@@ -67,15 +67,15 @@ describe('copy service', () => {
     it('should copy page files', async () => {
       const pages = ['pages/index', 'pages/home']
 
-      await copyPagesFiles('/root', '/config', pages)
+      await copyPagesFiles('root', 'config', pages)
 
       expect(fs.copy).toHaveBeenCalledWith(
-        '/root/pages/index',
-        '/config/pages/index',
+        expect.stringMatching(/root[/\\]pages[/\\]index$/),
+        expect.stringMatching(/config[/\\]pages[/\\]index$/),
       )
       expect(fs.copy).toHaveBeenCalledWith(
-        '/root/pages/home',
-        '/config/pages/home',
+        expect.stringMatching(/root[/\\]pages[/\\]home$/),
+        expect.stringMatching(/config[/\\]pages[/\\]home$/),
       )
     })
   })
@@ -85,13 +85,13 @@ describe('copy service', () => {
       const originalContent = 'original content'
       const modifiedContent = 'modified content'
 
-      vi.mocked(fs.readFile).mockResolvedValue(originalContent)
+      vi.mocked(fs.readFile).mockResolvedValue(originalContent as any)
 
-      await modifyFile('/config', 'test.txt', () => modifiedContent)
+      await modifyFile('config', 'test.txt', () => modifiedContent)
 
-      expect(fs.readFile).toHaveBeenCalledWith('/config/test.txt', 'utf8')
+      expect(fs.readFile).toHaveBeenCalledWith(expect.stringMatching(/config[/\\]test\.txt$/), 'utf8')
       expect(fs.writeFile).toHaveBeenCalledWith(
-        '/config/test.txt',
+        expect.stringMatching(/config[/\\]test\.txt$/),
         modifiedContent,
         'utf8',
       )
@@ -105,9 +105,9 @@ describe('copy service', () => {
         subPackages: [],
       }
 
-      vi.mocked(fs.readFile).mockResolvedValue(JSON.stringify(appJson))
+      vi.mocked(fs.readFile).mockResolvedValue(JSON.stringify(appJson) as any)
 
-      await updateAppJson('/config', ['pages/index'], [])
+      await updateAppJson('config', ['pages/index'], [])
 
       expect(fs.writeFile).toHaveBeenCalled()
       const writtenContent = vi.mocked(fs.writeFile).mock.calls[0][1] as string
@@ -122,9 +122,9 @@ describe('copy service', () => {
         subPackages: [],
       }
 
-      vi.mocked(fs.readFile).mockResolvedValue(JSON.stringify(appJson))
+      vi.mocked(fs.readFile).mockResolvedValue(JSON.stringify(appJson) as any)
 
-      await updateAppJson('/config', [], [
+      await updateAppJson('config', [], [
         {
           root: 'packages',
           pages: ['detail'],
