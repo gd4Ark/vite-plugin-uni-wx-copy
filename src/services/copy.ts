@@ -3,6 +3,7 @@ import * as path from 'node:path'
 import * as fs from 'fs-extra'
 import { replaceInFile as replace } from 'replace-in-file'
 import { logger } from '../utils/logger'
+import { normalizePath } from '../utils/path'
 
 /**
  * 复制共享文件
@@ -14,13 +15,13 @@ export async function copyFiles(
 ): Promise<void> {
   await Promise.all(
     copyItems.map(async ({ sources, dest }) => {
-      const destPath = path.resolve(configPath, dest)
+      const destPath = normalizePath(path.resolve(configPath, dest))
       await fs.ensureDir(destPath)
 
       await Promise.all(
         sources.map(async (source) => {
-          const srcPath = path.resolve(rootDir, source)
-          const targetPath = path.resolve(destPath, path.basename(source))
+          const srcPath = normalizePath(path.resolve(rootDir, source))
+          const targetPath = normalizePath(path.resolve(destPath, path.basename(source)))
 
           try {
             await fs.copy(srcPath, targetPath)
@@ -45,8 +46,8 @@ export async function copyPagesFiles(
 ): Promise<void> {
   await Promise.all(
     pages.map(async (page) => {
-      const srcPath = path.resolve(rootDir, page)
-      const destPath = path.resolve(configPath, page)
+      const srcPath = normalizePath(path.resolve(rootDir, page))
+      const destPath = normalizePath(path.resolve(configPath, page))
 
       try {
         await fs.copy(srcPath, destPath)
@@ -78,7 +79,7 @@ export async function replacePaths(
           ? `from '${p1.replace(`/${sharedDir}/`, `/${shared.dest}${sharedDir}/`)}'`
           : match
       },
-      files: pages.map(page => path.join(configPath, page, '**/*.js')),
+      files: pages.map(page => normalizePath(path.join(configPath, page, '**/*.js'))),
     },
     // 组件路径替换
     {
@@ -91,8 +92,8 @@ export async function replacePaths(
         }, match)
       },
       files: [
-        ...pages.map(page => path.join(configPath, page, '**/*.json')),
-        ...shared.sources.map(dir => path.join(configPath, shared.dest, dir, '**/*.json')),
+        ...pages.map(page => normalizePath(path.join(configPath, page, '**/*.json'))),
+        ...shared.sources.map(dir => normalizePath(path.join(configPath, shared.dest, dir, '**/*.json'))),
       ],
     },
   ]
@@ -177,7 +178,7 @@ export async function modifyFile(
   file: string,
   modifyContent: (content: string) => string,
 ): Promise<void> {
-  const fullPathFile = path.resolve(configPath, file)
+  const fullPathFile = normalizePath(path.resolve(configPath, file))
 
   try {
     const content = await fs.readFile(fullPathFile, 'utf8')
